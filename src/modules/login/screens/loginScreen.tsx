@@ -1,3 +1,4 @@
+import axios from "axios";
 import { useState } from "react";
 
 import Button from "../../../shared/inputs/input/buttons/button/button";
@@ -12,13 +13,32 @@ import {
 } from "../styles/loginScreen.styles";
 
 const LoginScreen = () => {
-  const [userName, setUserName] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const handleUserName = (event: React.ChangeEvent<HTMLInputElement>) =>
-    setUserName(event.target.value);
+  const handleEmail = (event: React.ChangeEvent<HTMLInputElement>) =>
+    setEmail(event.target.value);
   const handlePassword = (event: React.ChangeEvent<HTMLInputElement>) =>
     setPassword(event.target.value);
-  const handleLogin = () => alert(`Usuário: ${userName}, Senha: ${password}`);
+  const handleLogin = async () => {
+    const response = await axios({
+      method: "post",
+      url: "http://localhost:8080/auth",
+      data: {
+        email,
+        password,
+      },
+    })
+      .then((result) => {
+        alert(`Fez login!`);
+        return result.data;
+      })
+      .catch((error) => {
+        console.log(`xablau: }`, error);
+        alert(`xablau: verifique o console}`);
+      });
+
+    console.log("response:", response);
+  };
 
   return (
     <ContainerLoginScreen>
@@ -31,8 +51,8 @@ const LoginScreen = () => {
           <Input
             title="Usuário"
             margin="16px 0 0 0"
-            onChange={handleUserName}
-            value={userName}
+            onChange={handleEmail}
+            value={email}
           />
           <Input
             type="password"
