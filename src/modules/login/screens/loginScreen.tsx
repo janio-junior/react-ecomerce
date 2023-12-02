@@ -1,9 +1,10 @@
-import axios from "axios";
 import { useState } from "react";
 
-import Button from "../../../shared/buttons/button/button";
-import SVGLogo from "../../../shared/icons/SVGLogo";
-import Input from "../../../shared/inputs/input/input";
+import Button from "../../../shared/components/buttons/button/button";
+import SVGLogo from "../../../shared/components/icons/SVGLogo";
+import Input from "../../../shared/components/inputs/input/input";
+import { useGlobalContext } from "../../../shared/hooks/useGlobalContext";
+import { useRequests } from "../../../shared/hooks/useRequest";
 import {
   BackgroundImage,
   ContainerLogin,
@@ -13,31 +14,24 @@ import {
 } from "../styles/loginScreen.styles";
 
 const LoginScreen = () => {
+  const { accessToken, setAccessToken } = useGlobalContext();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const { postRequest, loading } = useRequests();
+
   const handleEmail = (event: React.ChangeEvent<HTMLInputElement>) =>
     setEmail(event.target.value);
+
   const handlePassword = (event: React.ChangeEvent<HTMLInputElement>) =>
     setPassword(event.target.value);
-  const handleLogin = async () => {
-    const response = await axios({
-      method: "post",
-      url: "http://localhost:8080/auth",
-      data: {
-        email,
-        password,
-      },
-    })
-      .then((result) => {
-        alert(`Fez login!`);
-        return result.data;
-      })
-      .catch((error) => {
-        console.log(`xablau: }`, error);
-        alert(`xablau: verifique o console}`);
-      });
 
-    console.log("response:", response);
+  const handleLogin = async () => {
+    setAccessToken("novo token");
+    postRequest("http://localhost:8080/auth", {
+      email,
+      password,
+    });
   };
 
   return (
@@ -46,7 +40,7 @@ const LoginScreen = () => {
         <LimitedContainer>
           <SVGLogo />
           <TitleLogin level={2} type="secondary">
-            LOGIN
+            LOGIN {accessToken}
           </TitleLogin>
           <Input
             title="Usuário"
@@ -61,7 +55,12 @@ const LoginScreen = () => {
             onChange={handlePassword}
             value={password}
           />
-          <Button type="primary" margin="64px 16px" onClick={handleLogin}>
+          <Button
+            loading={loading}
+            type="primary"
+            margin="64px 16px"
+            onClick={handleLogin}
+          >
             ENTRAR
           </Button>
         </LimitedContainer>
