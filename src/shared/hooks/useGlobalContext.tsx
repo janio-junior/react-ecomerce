@@ -1,7 +1,16 @@
+import type { NotificationPlacement } from "antd/es/notification/interface";
 import { createContext, useContext, useState } from "react";
+type NotificationType = "success" | "info" | "warning" | "error";
 
+interface NotificationProps {
+  type: NotificationType;
+  message: string;
+  description?: string;
+  placement: NotificationPlacement;
+}
 interface GlobalData {
   accessToken?: string;
+  notification?: NotificationProps;
 }
 
 interface GlobalContextProps {
@@ -35,7 +44,26 @@ export const useGlobalContext = () => {
     });
   };
 
+  const setNotification = (
+    type: NotificationType,
+    message: string,
+    description?: string,
+    placement?: NotificationPlacement,
+  ) => {
+    setGlobalData({
+      ...globalData,
+      notification: {
+        type,
+        message,
+        description,
+        placement: placement ?? "bottomRight",
+      },
+    });
+  };
+
   return {
+    notification: globalData?.notification,
+    setNotification,
     accessToken: globalData?.accessToken,
     setAccessToken,
   };

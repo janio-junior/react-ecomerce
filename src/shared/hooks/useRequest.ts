@@ -1,8 +1,11 @@
 import axios from "axios";
 import { useState } from "react";
 
+import { useGlobalContext } from "./useGlobalContext";
+
 export const useRequests = () => {
   const [loading, setLoading] = useState(false);
+  const { setNotification } = useGlobalContext();
 
   const getRequest = async (url: string) => {
     setLoading(true);
@@ -26,10 +29,18 @@ export const useRequests = () => {
       url: url,
       data: body,
     })
-      .then((result) => result.data)
+      .then((result) => {
+        setNotification(
+          "success",
+          "Login efetuado com sucesso!",
+          "Você será redirecionado para página principal em alguns segundos.",
+        );
+        return result.data;
+      })
       .catch(() => {
-        alert(
-          `Não foi possível concluir a solicitação no momento, tente novamente mais tarde!`,
+        setNotification(
+          "error",
+          "Não foi possível efetuar o login! Verifique seu usuário e senha e tente novamente.",
         );
       });
 
