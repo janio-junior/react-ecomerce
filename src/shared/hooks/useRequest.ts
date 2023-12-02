@@ -8,7 +8,7 @@ export const useRequests = () => {
   const [loading, setLoading] = useState(false);
   const { setNotification } = useGlobalContext();
 
-  const getRequest = async (url: string) => {
+  const getRequest = async <T>(url: string): Promise<T> => {
     setLoading(true);
     return await axios({
       method: "get",
@@ -22,9 +22,12 @@ export const useRequests = () => {
       });
   };
 
-  const postRequest = async (url: string, body: unknown) => {
+  const postRequest = async <T>(
+    url: string,
+    body: unknown,
+  ): Promise<T | undefined> => {
     setLoading(true);
-    const result = await ConnectionAPIPost(url, body)
+    const result = await ConnectionAPIPost<T>(url, body)
       .then((result) => {
         setNotification(
           "success",
@@ -35,6 +38,7 @@ export const useRequests = () => {
       })
       .catch((error: Error) => {
         setNotification("error", error.message);
+        return undefined;
       });
 
     setLoading(false);

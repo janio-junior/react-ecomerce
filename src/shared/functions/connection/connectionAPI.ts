@@ -8,11 +8,19 @@ import {
 import { MethodsEnum } from "../../enums/methods.enum";
 
 export default class ConnectionAPI {
-  static async fetch<T>(url: string, method: MethodsEnum, body?: unknown) {
+  static async fetch<T>(
+    url: string,
+    method: MethodsEnum,
+    body?: unknown,
+  ): Promise<T> {
     return (await axios[method]<T>(url, body)).data;
   }
 
-  static async connect<T>(url: string, method: MethodsEnum, body?: unknown) {
+  static async connect<T>(
+    url: string,
+    method: MethodsEnum,
+    body?: unknown,
+  ): Promise<T> {
     return ConnectionAPI.fetch<T>(url, method, body).catch((error) => {
       if (error.response) {
         const codeStatus: keyof codeMessage = error.response.status;
@@ -29,12 +37,12 @@ export default class ConnectionAPI {
           403: ERROR_ACCESS_DENAIED,
         };
 
-        if (!codeMessage[codeStatus]) {
-          throw new Error(ERROR_DEFAULT);
+        if (codeMessage[codeStatus]) {
+          throw new Error(codeMessage[codeStatus]);
         }
-
-        throw new Error(codeMessage[codeStatus]);
       }
+
+      throw new Error(ERROR_DEFAULT);
     });
   }
 }
@@ -43,19 +51,25 @@ export const fetchAPI = async <T>(
   method: MethodsEnum,
   url: string,
   body?: unknown,
-) => ConnectionAPI.connect<T>(url, method, body);
+): Promise<T> => ConnectionAPI.connect<T>(url, method, body);
 
-export const ConnectionAPIGet = async <T>(url: string) =>
+export const ConnectionAPIGet = async <T>(url: string): Promise<T> =>
   ConnectionAPI.connect<T>(url, MethodsEnum.GET);
 
-export const ConnectionAPIPost = async <T>(url: string, body: unknown) =>
-  ConnectionAPI.connect<T>(url, MethodsEnum.POST, body);
+export const ConnectionAPIPost = async <T>(
+  url: string,
+  body: unknown,
+): Promise<T> => ConnectionAPI.connect<T>(url, MethodsEnum.POST, body);
 
-export const ConnectionAPIDelete = async <T>(url: string) =>
+export const ConnectionAPIDelete = async <T>(url: string): Promise<T> =>
   ConnectionAPI.connect<T>(url, MethodsEnum.DELETE);
 
-export const ConnectionAPIPutch = async <T>(url: string, body: unknown) =>
-  ConnectionAPI.connect<T>(url, MethodsEnum.PATCH, body);
+export const ConnectionAPIPutch = async <T>(
+  url: string,
+  body: unknown,
+): Promise<T> => ConnectionAPI.connect<T>(url, MethodsEnum.PATCH, body);
 
-export const ConnectionAPIPut = async <T>(url: string, body: unknown) =>
-  ConnectionAPI.connect<T>(url, MethodsEnum.PUT, body);
+export const ConnectionAPIPut = async <T>(
+  url: string,
+  body: unknown,
+): Promise<T> => ConnectionAPI.connect<T>(url, MethodsEnum.PUT, body);
