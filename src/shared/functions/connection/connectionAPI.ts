@@ -1,4 +1,4 @@
-import axios from "axios";
+import axios, { AxiosRequestConfig } from "axios";
 
 import {
   ERROR_ACCESS_DENAIED,
@@ -6,6 +6,7 @@ import {
   ERROR_DEFAULT,
 } from "../../constants/errorStatus";
 import { MethodsEnum } from "../../enums/methods.enum";
+import { getAuthorizationToken } from "./auth";
 
 export default class ConnectionAPI {
   static async fetch<T>(
@@ -13,7 +14,17 @@ export default class ConnectionAPI {
     method: MethodsEnum,
     body?: unknown,
   ): Promise<T> {
-    return (await axios[method]<T>(url, body)).data;
+    const config: AxiosRequestConfig = {
+      headers: {
+        Authorization: getAuthorizationToken(),
+        "Content-Type": "application/json",
+      },
+    };
+
+    if (body) {
+      return (await axios[method]<T>(url, body, config)).data;
+    }
+    return (await axios[method]<T>(url, config)).data;
   }
 
   static async connect<T>(
