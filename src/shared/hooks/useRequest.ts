@@ -12,7 +12,7 @@ import { useGlobalContext } from "./useGlobalContext";
 
 export const useRequests = () => {
   const [loading, setLoading] = useState(false);
-  const { setNotification } = useGlobalContext();
+  const { setNotification, setUser } = useGlobalContext();
   const navigate = useNavigate();
 
   const getRequest = async <T>(url: string): Promise<T> => {
@@ -62,6 +62,7 @@ export const useRequests = () => {
           "Login efetuado com sucesso!",
           "Você será redirecionado para página principal em alguns segundos.",
         );
+        setUser(result.user);
         setAuthorizationToken(result.accessToken);
         navigate(ProductRoutesEnum.PRODUCT);
       })
