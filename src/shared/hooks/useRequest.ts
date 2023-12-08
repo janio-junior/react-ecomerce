@@ -1,4 +1,3 @@
-import axios from "axios";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -6,8 +5,11 @@ import { AuthType } from "../../modules/login/types/AuthType";
 import { ProductRoutesEnum } from "../../modules/products/routes";
 import { ERROR_INVALID_PASSWORD } from "../constants/errorStatus";
 import { URL_AUTH } from "../constants/urls";
+import { MethodsEnum } from "../enums/methods.enum";
 import { setAuthorizationToken } from "../functions/connection/auth";
-import { ConnectionAPIPost } from "../functions/connection/connectionAPI";
+import ConnectionAPI, {
+  ConnectionAPIPost,
+} from "../functions/connection/connectionAPI";
 import { useGlobalContext } from "./useGlobalContext";
 
 export const useRequests = () => {
@@ -15,18 +17,31 @@ export const useRequests = () => {
   const { setNotification, setUser } = useGlobalContext();
   const navigate = useNavigate();
 
-  const getRequest = async <T>(url: string): Promise<T> => {
+  const request = async <T>(
+    url: string,
+    method: MethodsEnum,
+    body?: unknown,
+    saveGlobal?: (object: T | undefined) => void,
+  ): Promise<T | undefined> => {
     setLoading(true);
-    return await axios({
-      method: "get",
-      url: url,
-    })
-      .then((result) => result.data)
-      .catch(() => {
-        alert(
-          `Não foi possível concluir a solicitação no momento, tente novamente mais tarde!`,
-        );
+
+    const returnObject: T | undefined = await ConnectionAPI.connect<
+      T | undefined
+    >(url, method, body)
+      .then((result) => {
+        if (saveGlobal) {
+          saveGlobal(result);
+        }
+
+        return result;
+      })
+      .catch((error: Error) => {
+        setNotification("error", error.message);
+        return undefined;
       });
+
+    setLoading(false);
+    return returnObject;
   };
 
   const postRequest = async <T>(
@@ -76,7 +91,7 @@ export const useRequests = () => {
   return {
     loading,
     authRequest,
-    getRequest,
+    request,
     postRequest,
   };
 };

@@ -3,7 +3,7 @@ import { createContext, useContext, useState } from "react";
 
 import { UserType } from "../../modules/login/types/UserTypes";
 
-type NotificationType = "success" | "info" | "warning" | "error";
+export type NotificationType = "success" | "info" | "warning" | "error";
 
 interface NotificationProps {
   type: NotificationType;
