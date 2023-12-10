@@ -1,7 +1,7 @@
 import { ColumnsType } from "antd/es/table";
 import { useEffect } from "react";
 
-import Table from "../../../shared/components/table/Table";
+import Table from "../../../shared/components/table/table";
 import { URL_PRODUCT } from "../../../shared/constants/urls";
 import { MethodsEnum } from "../../../shared/enums/methods.enum";
 import { useDataContext } from "../../../shared/hooks/useDataContext";
@@ -45,7 +45,7 @@ const ProductScreen = () => {
     request<ProductType[]>(URL_PRODUCT, MethodsEnum.GET, null, setProducts);
   }, []);
 
-  return <Table columns={columns} dataSource={products} />;
+  return <Table columns={columns} dataSource={products} rowKey="id" />;
 };
 
 export default ProductScreen;
