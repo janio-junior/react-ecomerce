@@ -10,10 +10,11 @@ const HomeScreen = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    console.log(user);
     if (user) {
       navigate(ProductRoutesEnum.PRODUCT);
     }
-  }, []);
+  }, [user]);
   return <Spin />;
 };
 
