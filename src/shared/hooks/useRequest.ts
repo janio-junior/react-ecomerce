@@ -21,7 +21,7 @@ export const useRequests = () => {
     url: string,
     method: MethodsEnum,
     body?: unknown,
-    saveGlobal?: (object: T | undefined) => void,
+    callback?: (object: T | undefined) => void,
   ): Promise<T | undefined> => {
     setLoading(true);
 
@@ -29,8 +29,8 @@ export const useRequests = () => {
       T | undefined
     >(url, method, body)
       .then((result) => {
-        if (saveGlobal) {
-          saveGlobal(result);
+        if (callback) {
+          callback(result);
         }
 
         return result;
@@ -42,29 +42,6 @@ export const useRequests = () => {
 
     setLoading(false);
     return returnObject;
-  };
-
-  const postRequest = async <T>(
-    url: string,
-    body: unknown,
-  ): Promise<T | undefined> => {
-    setLoading(true);
-    const result = await ConnectionAPIPost<T>(url, body)
-      .then((result) => {
-        setNotification(
-          "success",
-          "Login efetuado com sucesso!",
-          "Você será redirecionado para página principal em alguns segundos.",
-        );
-        return result;
-      })
-      .catch((error: Error) => {
-        setNotification("error", error.message);
-        return undefined;
-      });
-
-    setLoading(false);
-    return result;
   };
 
   const authRequest = async (body: unknown): Promise<void> => {
@@ -92,6 +69,5 @@ export const useRequests = () => {
     loading,
     authRequest,
     request,
-    postRequest,
   };
 };
