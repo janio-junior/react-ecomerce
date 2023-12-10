@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig } from "axios";
 
 import {
-  ERROR_ACCESS_DENAIED,
+  ERROR_ACCESS_DENIED,
   ERROR_CONNECTION,
   ERROR_DEFAULT,
 } from "../../constants/errorStatus";
@@ -21,10 +21,16 @@ export default class ConnectionAPI {
       },
     };
 
-    if (body) {
-      return (await axios[method]<T>(url, body, config)).data;
+    switch (method) {
+      case MethodsEnum.POST:
+      case MethodsEnum.PUT:
+      case MethodsEnum.PATCH:
+        return (await axios[method]<T>(url, body, config)).data;
+      case MethodsEnum.GET:
+      case MethodsEnum.DELETE:
+      default:
+        return (await axios[method]<T>(url, config)).data;
     }
-    return (await axios[method]<T>(url, config)).data;
   }
 
   static async connect<T>(
@@ -44,8 +50,8 @@ export default class ConnectionAPI {
 
         const codeMessage = {
           0: ERROR_CONNECTION,
-          401: ERROR_ACCESS_DENAIED,
-          403: ERROR_ACCESS_DENAIED,
+          401: ERROR_ACCESS_DENIED,
+          403: ERROR_ACCESS_DENIED,
         };
 
         if (codeMessage[codeStatus]) {

@@ -1,8 +1,6 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { AuthType } from "../../modules/login/types/AuthType";
-import { ProductRoutesEnum } from "../../modules/products/routes";
 import { ERROR_INVALID_PASSWORD } from "../constants/errorStatus";
 import { URL_AUTH } from "../constants/urls";
 import { MethodsEnum } from "../enums/methods.enum";
@@ -15,13 +13,12 @@ import { useGlobalContext } from "./useGlobalContext";
 export const useRequests = () => {
   const [loading, setLoading] = useState(false);
   const { setNotification, setUser } = useGlobalContext();
-  const navigate = useNavigate();
 
   const request = async <T>(
     url: string,
     method: MethodsEnum,
     body?: unknown,
-    callback?: (object: T | undefined) => void,
+    callback?: (data: T) => void,
   ): Promise<T | undefined> => {
     setLoading(true);
 
@@ -29,7 +26,7 @@ export const useRequests = () => {
       T | undefined
     >(url, method, body)
       .then((result) => {
-        if (callback) {
+        if (callback && result) {
           callback(result);
         }
 
@@ -56,7 +53,6 @@ export const useRequests = () => {
         );
         setUser(result.user);
         setAuthorizationToken(result.accessToken);
-        navigate(ProductRoutesEnum.PRODUCT);
       })
       .catch(() => {
         setNotification("error", ERROR_INVALID_PASSWORD);

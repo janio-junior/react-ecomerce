@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import Button from "../../../shared/components/buttons/button/button";
 import SVGLogo from "../../../shared/components/icons/SVGLogo";
 import Input from "../../../shared/components/inputs/input/input";
 import { useRequests } from "../../../shared/hooks/useRequest";
+import { ProductRoutesEnum } from "../../products/routes";
 import {
   BackgroundImage,
   ContainerLogin,
@@ -15,6 +17,7 @@ import {
 const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const { authRequest, loading } = useRequests();
 
@@ -25,7 +28,9 @@ const LoginScreen = () => {
     setPassword(event.target.value);
 
   const handleLogin = () => {
-    authRequest({ email, password });
+    authRequest({ email, password }).then(() => {
+      navigate(ProductRoutesEnum.PRODUCT);
+    });
   };
 
   return (
