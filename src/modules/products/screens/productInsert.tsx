@@ -5,10 +5,7 @@ import Button from "../../../shared/components/buttons/button/button";
 import Input from "../../../shared/components/inputs/input/input";
 import Select from "../../../shared/components/inputs/select/select";
 import Screen from "../../../shared/components/screens/screen";
-import {
-  DisplayFlex,
-  DisplayFlexRight,
-} from "../../../shared/components/styles/display.styled";
+import { DisplayFlexRight } from "../../../shared/components/styles/display.styled";
 import { Container } from "../../../shared/components/styles/limited.styled";
 import { URL_CATEGORY, URL_PRODUCT } from "../../../shared/constants/urls";
 import { InsertProduct } from "../../../shared/dtos/InsertProduct.dto";
